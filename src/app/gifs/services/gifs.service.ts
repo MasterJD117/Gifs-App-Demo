@@ -15,6 +15,8 @@ export class GifsService {
 
   public searchTags(tag: string): void {
     this._tagsHistory.unshift(tag);
+    console.log(this.tagsHistory);
+
   }
 
 }
