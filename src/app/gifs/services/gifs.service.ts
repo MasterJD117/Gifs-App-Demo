@@ -7,15 +7,18 @@ import { Gif, SearchResponse } from '../interfaces/gifs.interfaces';
 })
 export class GifsService {
 
+  public gifList: Gif[] = [];
+
+
   private _tagsHistory: string[] = [];
   private apiKey: string = "o1W0FOzICjCOods1tNMROdClCMNPlepS";
   private serviceUrl: string = "https://api.giphy.com/v1/gifs"
 
-  constructor(
-    private http:HttpClient
-  ) { }
+  constructor(private http:HttpClient) {
+    this.loadLocalStorage();
+    console.log('Gifs Service Ready');
 
-  public gifList: Gif[] = [];
+  }
 
   get tagsHistory() {
     return [...this._tagsHistory];
@@ -30,6 +33,7 @@ export class GifsService {
 
     this._tagsHistory.unshift(tag);
     this._tagsHistory = this.tagsHistory.splice(0,10);
+    this.saveLocalStorage();
 
   }
 
@@ -48,6 +52,18 @@ export class GifsService {
       // console.log({ gifs: this.gifList });
 
     });
+  }
+
+  private saveLocalStorage(): void {
+    localStorage.setItem('history', JSON.stringify(this._tagsHistory));
+  }
+
+  private loadLocalStorage(): void {
+    if (! localStorage.getItem('history')) return;
+    this._tagsHistory = JSON.parse(localStorage.getItem('history')!);
+
+    if (this._tagsHistory.length === 0) return;
+    this.searchTags( this._tagsHistory[0] );
   }
 
 }
